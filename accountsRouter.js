@@ -9,7 +9,7 @@ router.get("/", async (req, res, next) => {
     try {
         let accounts;
 
-        if (Object.keys(req.query).length === 0) {
+        if (Object.keys(req.query).length < 3) {
             accounts = await db.select("*").from("accounts");
         } else {
             accounts = await db
