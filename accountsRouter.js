@@ -6,21 +6,19 @@ const router = express.Router();
 
 router.get("/", async (req, res, next) => {
     console.log(req.query);
-    try {
-        let accounts;
 
-        if (Object.keys(req.query).length < 3) {
-            accounts = await db.select("*").from("accounts");
-        } else {
-            accounts = await db
-                .select("*")
-                .from("accounts")
-                .modify(function (queryBuilder) {
-                    queryBuilder
-                        .limit(req.query.limit)
-                        .orderBy(req.query.sortby, req.query.sortdir);
-                });
-        }
+    try {
+        let accounts =
+            Object.keys(req.query).length < 3
+                ? await db.select("*").from("accounts")
+                : await db
+                      .select("*")
+                      .from("accounts")
+                      .modify(function (queryBuilder) {
+                          queryBuilder
+                              .limit(req.query.limit)
+                              .orderBy(req.query.sortby, req.query.sortdir);
+                      });
 
         res.json(accounts);
     } catch (err) {
