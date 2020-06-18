@@ -1,11 +1,26 @@
 const express = require("express");
 const db = require("./data/dbConfig");
+const e = require("express");
 
 const router = express.Router();
 
 router.get("/", async (req, res, next) => {
+    console.log(req.query);
     try {
-        const accounts = await db.select("*").from("accounts");
+        let accounts;
+
+        if (Object.keys(req.query).length === 0) {
+            accounts = await db.select("*").from("accounts");
+        } else {
+            accounts = await db
+                .select("*")
+                .from("accounts")
+                .modify(function (queryBuilder) {
+                    queryBuilder
+                        .limit(req.query.limit)
+                        .orderBy(req.query.sortby, req.query.sortdir);
+                });
+        }
 
         res.json(accounts);
     } catch (err) {
